@@ -22,7 +22,7 @@ def save_media_release(page)
     scraped_datetime: DateTime.now.to_s
   }
 
-  puts "Saving #{title} - #{pub_datetime.strftime('%Y-%m-%d')}"
+  puts "Saving: #{title}, #{pub_datetime.strftime('%Y-%m-%d')}"
   ScraperWiki.save_sqlite([:url], media_release)
 end
 
