@@ -47,14 +47,3 @@ index.search('#content_div_111604 a').each do |link|
     save_media_release(media_release_page)
   end
 end
-
-# Add topic to existing entries
-if !(ScraperWiki.select("* from data limit 1").empty? rescue false)
-  ScraperWiki.select("* from data where topic=NULL").each do |media_release|
-    media_release["topic"] = extract_topic(media_release["title"])
-    unless media_release["topic"].empty?
-      puts "Adding topic to #{media_release["title"]}"
-      ScraperWiki.save_sqlite(["url"], media_release)
-    end
-  end
-end
