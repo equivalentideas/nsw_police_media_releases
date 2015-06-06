@@ -6,11 +6,13 @@ require 'mechanize'
 
 
 # Add topic to existing entries
-ScraperWiki.select("* from data where topic=''").each do |media_release|
-  if media_release["title"].include?(" - ")
-    media_release["topic"] = media_release["title"][/[-][ ].*$/].gsub(/^[-][ ]/, "")
-    puts "Adding topic to #{media_release["title"]}"
-    ScraperWiki.save_sqlite(["url"], media_release)
+if !(ScraperWiki.select("* from data limit 1").empty? rescue false)
+  ScraperWiki.select("* from data where topic=''").each do |media_release|
+    if media_release["title"].include?(" - ")
+      media_release["topic"] = media_release["title"][/[-][ ].*$/].gsub(/^[-][ ]/, "")
+      puts "Adding topic to #{media_release["title"]}"
+      ScraperWiki.save_sqlite(["url"], media_release)
+    end
   end
 end
 
