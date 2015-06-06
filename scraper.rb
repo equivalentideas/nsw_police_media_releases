@@ -14,11 +14,17 @@ def save_media_release(page)
   # Strip the release header and meta elements leaving just the body
   container.children[0...9].remove
 
+  topic = ""
+  if title.include?(" - ")
+    topic = title[/[-][ ].*$/].gsub(/^[-][ ]/, "")
+  end
+
   media_release = {
     title: title,
     pub_datetime: pub_datetime.to_s,
     body: container.inner_html,
     url: page.uri.to_s,
+    topic: topic,
     scraped_datetime: DateTime.now.to_s
   }
 
