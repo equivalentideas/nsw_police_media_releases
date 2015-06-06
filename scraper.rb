@@ -31,7 +31,7 @@ agent = Mechanize.new
 index = agent.get('http://www.police.nsw.gov.au/news/media_release_archives')
 
 index.search('#content_div_111604 a').each do |link|
-  if !ScraperWiki.select("url from data where url='#{link.attr(:href)}'").empty?
+  if (!ScraperWiki.select("url from data where url='#{link.attr(:href)}'").empty? rescue true)
     puts "Skipping already saved media release #{link.text} #{link.attr(:href)}"
   else
     media_release_page = agent.get(link.attr(:href))
