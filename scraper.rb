@@ -50,7 +50,7 @@ end
 
 # Add topic to existing entries
 if !(ScraperWiki.select("* from data limit 1").empty? rescue false)
-  ScraperWiki.select("* from data where topic=''").each do |media_release|
+  ScraperWiki.select("* from data where topic=NULL").each do |media_release|
     media_release["topic"] = extract_topic(media_release["title"])
     unless media_release["topic"].empty?
       puts "Adding topic to #{media_release["title"]}"
