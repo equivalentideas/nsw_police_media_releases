@@ -4,6 +4,16 @@
 require 'scraperwiki'
 require 'mechanize'
 
+
+# Add topic to existing entries
+ScraperWiki.select("* from data where topic=''").each do |media_release|
+  if media_release["title"].include?(" - ")
+    media_release["topic"] = media_release["title"][/[-][ ].*$/].gsub(/^[-][ ]/, "")
+    puts "Adding topic to #{media_release["title"]}"
+    ScraperWiki.save_sqlite(["url"], media_release)
+  end
+end
+
 def save_media_release(page)
   container = page.search('div#content-main')
 
