@@ -4,12 +4,19 @@
 require 'scraperwiki'
 require 'mechanize'
 
+def extract_topic(title)
+  topic = ""
+  if title.include?(" - ")
+    topic = title[/[-][ ].*$/].gsub(/^[-][ ]/, "")
+  end
+  return topic
+end
 
 # Add topic to existing entries
 if !(ScraperWiki.select("* from data limit 1").empty? rescue false)
   ScraperWiki.select("* from data where topic=''").each do |media_release|
-    if media_release["title"].include?(" - ")
-      media_release["topic"] = media_release["title"][/[-][ ].*$/].gsub(/^[-][ ]/, "")
+    media_release["topic"] = extract_topic(media_release["title"])
+    unless media_release["topic"].empty?
       puts "Adding topic to #{media_release["title"]}"
       ScraperWiki.save_sqlite(["url"], media_release)
     end
@@ -26,17 +33,12 @@ def save_media_release(page)
   # Strip the release header and meta elements leaving just the body
   container.children[0...9].remove
 
-  topic = ""
-  if title.include?(" - ")
-    topic = title[/[-][ ].*$/].gsub(/^[-][ ]/, "")
-  end
-
   media_release = {
     title: title,
     pub_datetime: pub_datetime.to_s,
     body: container.inner_html,
     url: page.uri.to_s,
-    topic: topic,
+    topic: extract_topic(title),
     scraped_datetime: DateTime.now.to_s
   }
 
