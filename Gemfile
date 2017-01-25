@@ -4,7 +4,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.1.6"
+ruby "2.2.4"
 
 gem "scraperwiki", git: "https://github.com/openaustralia/scraperwiki-ruby.git", branch: "morph_defaults"
 gem "mechanize"
