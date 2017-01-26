@@ -3,6 +3,7 @@
 
 require 'scraperwiki'
 require 'mechanize'
+require 'rest-client'
 
 def extract_topic(title)
   topic = ""
@@ -10,6 +11,11 @@ def extract_topic(title)
     topic = title[/[-][ ].*$/].gsub(/^[-][ ]/, "")
   end
   return topic
+end
+
+def web_archive(page)
+  archive_request_response = RestClient.get("https://web.archive.org/save/#{page.uri.to_s}")
+  "https://web.archive.org" + archive_request_response.headers[:content_location]
 end
 
 def save_media_release(page)
@@ -27,6 +33,7 @@ def save_media_release(page)
     pub_datetime: pub_datetime.to_s,
     body: container.inner_html,
     url: page.uri.to_s,
+    web_archive_url: web_archive(page),
     topic: extract_topic(title),
     scraped_datetime: DateTime.now.to_s
   }
