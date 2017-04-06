@@ -52,9 +52,9 @@ index.search('#content_div_111604 a').each do |link|
   if (!ScraperWiki.select("url from data where url='#{link.attr(:href)}'").empty? rescue false)
     puts "Skipping already saved media release #{link.text} #{link.attr(:href)}"
   else
+    sleep 5
+
     media_release_page = agent.get(link.attr(:href))
     save_media_release(media_release_page)
   end
-
-  sleep 5
 end
