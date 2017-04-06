@@ -56,5 +56,5 @@ index.search('#content_div_111604 a').each do |link|
     save_media_release(media_release_page)
   end
 
-  sleep 2
+  sleep 5
 end
