@@ -55,4 +55,6 @@ index.search('#content_div_111604 a').each do |link|
     media_release_page = agent.get(link.attr(:href))
     save_media_release(media_release_page)
   end
+
+  sleep 2
 end
