@@ -19,19 +19,21 @@ def web_archive(page)
 end
 
 def save_media_release(page)
-  container = page.search('div#content-main')
+  container = page.at('main .o-content')
 
-  title = container.search(:h1)[1].text
+  title = container.at(:h1).text
 
-  pub_datetime = DateTime.parse(container.children[8].text, '%A, %d %B %Y %l:%M:%S %p')
+  pub_datetime = DateTime.parse(container.at('p:first-of-type').text, '%A, %d %B %Y %I:%M:%S %p')
 
-  # Strip the release header and meta elements leaving just the body
-  container.children[0...9].remove
+  body = container.children.drop_while do |n|
+    # Strip the junk before the title, the title, and pubdate
+    n != container.at('p:nth-of-type(2)')
+  end.map {|n| n.to_html }.join # convert to string of html
 
   media_release = {
     title: title,
     pub_datetime: pub_datetime.to_s,
-    body: container.inner_html,
+    body: body,
     url: page.uri.to_s,
     web_archive_url: web_archive(page),
     topic: extract_topic(title),
@@ -44,11 +46,11 @@ end
 
 agent = Mechanize.new
 
-index = agent.get('http://www.police.nsw.gov.au/news/media_release_archives')
+index = agent.get('http://www.police.nsw.gov.au/news')
 
 web_archive(index)
 
-index.search('#content_div_111604 a').each do |link|
+index.search('.p-card--masonry a').each do |link|
   if (!ScraperWiki.select("url from data where url='#{link.attr(:href)}'").empty? rescue false)
     puts "Skipping already saved media release #{link.text} #{link.attr(:href)}"
   else
